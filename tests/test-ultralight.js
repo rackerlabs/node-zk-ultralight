@@ -35,6 +35,14 @@ test('lock and unlock', function(t) {
   });
 });
 
+test('error trying to unlock, when not locked', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  cxn.unlock('/plumber/wrench', function(err) {
+    t.ok(err, "Correctly received error on unlock, when not locked");
+    t.end();
+  });
+});
+
 test('timeout on no connection', function(t) {
   var cxn = zkultra.getCxn(BAD_URLS, 500);
   cxn.lock('/some-lock', 'not happening', function(err) {
@@ -178,6 +186,20 @@ test('get children error', function(t) {
 
   cxn.lock('/Stumptown/coffee', 'the best coffee', function(err) {
     t.ok(err);
+    t.end();
+  });
+});
+
+
+// this sets the connection state to ERROR
+test('lock, change state to ERROR and unlock', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/plumber/wrench', 'grrr'),
+    cxn._changeState('ERROR'),
+    cxn.unlock.bind(cxn, '/plumber/wrench')
+  ], function(err, result) {
+    t.ok(err, "Correctly receieved unlock error");
     t.end();
   });
 });
