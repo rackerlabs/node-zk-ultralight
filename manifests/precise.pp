@@ -24,11 +24,6 @@ package {"npm":
   require => Package['nodejs']
 }
 
-exec { "node-gyp":
-  command => '/usr/bin/npm install -g node-gyp@0.12.2',
-  require => Package['npm']
-}
-
 package { "zookeeperd":
   ensure => present,
 }
