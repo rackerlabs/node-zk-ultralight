@@ -203,25 +203,21 @@ test('get children error', function(t) {
 
 
 // this sets the connection state to ERROR
-test('lock, change state to ERROR and unlock', function(t) {
-  t.skip("This is a terrible test which breaks the client.");
-  t.end();
-  return;
-
+test('lock, change state to ERROR and try to unlock', function(t) {
   var cxn = zkultra.getCxn(URLS);
   async.series([
     cxn.lock.bind(cxn, '/plumber/wrench', 'grrr'),
-    cxn._changeState('ERROR'),
-    cxn.unlock.bind(cxn, '/plumber/wrench')
+    function(callback) {
+      cxn._changeState('ERROR');
+      cxn.unlock('/plumber/wrench', callback);
+    }
   ], function(err, result) {
-    t.ok(err, "Correctly receieved unlock error");
-    cxn._connect();
+    t.ok(err, "Correctly receieved unlock error because the ephemeral lock was lost when the connection was closed");
     t.end();
   });
 });
 
 
-// this needs to be last, tape has no notion of 'cleanup'
 test('cleanup', function(t) {
   zkultra.shutdown();
   t.end();

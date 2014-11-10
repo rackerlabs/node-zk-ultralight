@@ -33,6 +33,8 @@ function somethingAsyncHappens(callback) {
 
 ## Development
 
+The Vagrantfile ships a vm with a running zookeeper instance, which is all you need to run tests.
+
 ### Tests
 
 `npm test`
