@@ -38,6 +38,17 @@ test('lock and unlock', function(t) {
   });
 });
 
+test('lock on the root (bad idea but people do it)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/megaphone', 'message'),
+    cxn.unlock.bind(cxn, '/megaphone')
+  ], function(err, result) {
+    t.ifError(err, "No error in lock and unlock on root");
+    t.end();
+  });
+});
+
 test('error trying to unlock, when not locked', function(t) {
   var cxn = zkultra.getCxn(URLS);
   cxn.unlock('/plumber/wrench', function(err) {
