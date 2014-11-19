@@ -38,13 +38,52 @@ test('lock and unlock', function(t) {
   });
 });
 
-test('lock on the root (bad idea but people do it)', function(t) {
+test('lock on root znode (bad idea but people do it)', function(t) {
   var cxn = zkultra.getCxn(URLS);
   async.series([
     cxn.lock.bind(cxn, '/megaphone', 'message'),
     cxn.unlock.bind(cxn, '/megaphone')
   ], function(err, result) {
     t.ifError(err, "No error in lock and unlock on root");
+    t.end();
+  });
+});
+
+test('lock on the root (even worse idea)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/', 'eek'),
+    cxn.unlock.bind(cxn, '/')
+  ], function(err, result) {
+    t.ifError(err, "No error in lock and unlock on root");
+    t.end();
+  });
+});
+
+test('blank lock name gets error', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '', 'eek')
+  ], function(err, result) {
+    t.ok(err, "Error if lockname is blank");
+    t.end();
+  });
+});
+
+test('lock name ends in /', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/foo/bar/', 'eek')
+  ], function(err, result) {
+    t.ok(err, "Error if lockname ends in /");
+    t.end();
+  });
+});
+
+test('create with invalid path (missing a slash)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  cxn.lock('INVALID_PATH', 'ponies', function(err) {
+    t.ok(err, "Invalid path receives an error");
     t.end();
   });
 });
@@ -62,14 +101,6 @@ test('timeout on no connection', function(t) {
   cxn.lock('/some-lock', 'not happening', function(err) {
     t.ok(err, "Correctly received error on timeout");
     t.ok(err instanceof Error);
-    t.end();
-  });
-});
-
-test('create with invalid path (missing a slash)', function(t) {
-  var cxn = zkultra.getCxn(URLS);
-  cxn.lock('INVALID_PATH', 'ponies', function(err) {
-    t.ok(err, "Invalid path receives an error");
     t.end();
   });
 });
