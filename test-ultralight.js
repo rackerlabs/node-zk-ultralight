@@ -17,7 +17,7 @@ limitations under the License.
 var test = require('tape');
 var async = require('async');
 var logmagic = require('logmagic');
-var zkultra = require('../lib/ultralight.js');
+var zkultra = require('./ultralight.js');
 
 if (process.env.TRACE) {
   logmagic.route("__root__", logmagic.TRACE1, "console");
