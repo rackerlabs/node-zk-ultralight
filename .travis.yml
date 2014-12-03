@@ -1,0 +1,7 @@
+language: node_js
+install:
+  - sudo apt-get update
+  - sudo apt-get install -y zookeeperd zookeeper
+  - npm install .
+node_js:
+   - "0.10"

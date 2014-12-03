@@ -1,6 +1,6 @@
 # Ultralight ZK locking utility
 
-Slimmer profile, low-calorie distributed locking library based on [node-zookeeper-client](https://github.com/racker/node-zookeeper-client)
+Slimmer profile, low-calorie distributed locking library based on [racker/node-zookeeper-client](https://github.com/racker/node-zookeeper-client) and [alexguan/node-zookeeper-client](https://github.com/alexguan/node-zookeeper-client)
 
 <a href="https://nodei.co/npm-dl/zk-ultralight/"><img src="https://nodei.co/npm-dl/zk-ultralight.png"></a>
 [![Dependency Status](https://david-dm.org/rackerlabs/node-zk-ultralight.png)](https://david-dm.org/rackerlabs/node-zk-ultralight)
@@ -10,6 +10,7 @@ Slimmer profile, low-calorie distributed locking library based on [node-zookeepe
 * Mildly different, much smaller interface
 * Fewer features (no master election)
 * Incompatible locking strategy
+* Uses a pure JS ZK client
 
 ## Locking strategy
 
@@ -20,7 +21,7 @@ The key difference: the ZK lock recipe recommends negotiating for the lock under
 ## Usage
 
 ```javascript
-function someAsyncActionWithLocking(callback) {
+function somethingAsyncHappens(callback) {
   var cxn = zkultra.getCxn(settings.ZOOKEEPER_URLS);
   async.series([
     cxn.lock.bind(cxn, '/some/lock/i/need', process.title +'-'+ process.pid),
@@ -32,17 +33,7 @@ function someAsyncActionWithLocking(callback) {
 
 ## Development
 
-### Building
-
-```bash
-$ git clone https://github.com/rackerlabs/node-zk-ultralight
-$ cd node-zk-ultralight
-$ npm install .
-$ vagrant up
-$ vagrant ssh
-$ cd /vagrant
-$ make
-```
+The Vagrantfile ships a vm with a running zookeeper instance, which is all you need to run tests.
 
 ### Tests
 

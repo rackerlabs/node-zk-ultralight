@@ -15,10 +15,13 @@ limitations under the License.
 */
 
 var test = require('tape');
-
 var async = require('async');
+var logmagic = require('logmagic');
+var zkultra = require('./ultralight.js');
 
-var zkultra = require('../lib/ultralight');
+if (process.env.TRACE) {
+  logmagic.route("__root__", logmagic.TRACE1, "console");
+}
 
 var URLS = ['127.0.0.1:2181'];
 var BAD_URLS = ['127.0.0.1:666'];
@@ -31,6 +34,56 @@ test('lock and unlock', function(t) {
     cxn.unlock.bind(cxn, '/plumber/wrench')
   ], function(err, result) {
     t.ifError(err, "No error in lock and unlock");
+    t.end();
+  });
+});
+
+test('lock on root znode (bad idea but people do it)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/megaphone', 'message'),
+    cxn.unlock.bind(cxn, '/megaphone')
+  ], function(err, result) {
+    t.ifError(err, "No error in lock and unlock on root");
+    t.end();
+  });
+});
+
+test('lock on the root (even worse idea)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/', 'eek'),
+    cxn.unlock.bind(cxn, '/')
+  ], function(err, result) {
+    t.ifError(err, "No error in lock and unlock on root");
+    t.end();
+  });
+});
+
+test('blank lock name gets error', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '', 'eek')
+  ], function(err, result) {
+    t.ok(err, "Error if lockname is blank");
+    t.end();
+  });
+});
+
+test('lock name ends in /', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  async.series([
+    cxn.lock.bind(cxn, '/foo/bar/', 'eek')
+  ], function(err, result) {
+    t.ok(err, "Error if lockname ends in /");
+    t.end();
+  });
+});
+
+test('create with invalid path (missing a slash)', function(t) {
+  var cxn = zkultra.getCxn(URLS);
+  cxn.lock('INVALID_PATH', 'ponies', function(err) {
+    t.ok(err, "Invalid path receives an error");
     t.end();
   });
 });
@@ -48,14 +101,6 @@ test('timeout on no connection', function(t) {
   cxn.lock('/some-lock', 'not happening', function(err) {
     t.ok(err, "Correctly received error on timeout");
     t.ok(err instanceof Error);
-    t.end();
-  });
-});
-
-test('create with invalid path (missing a slash)', function(t) {
-  var cxn = zkultra.getCxn(URLS);
-  cxn.lock('INVALID_PATH', 'ponies', function(err) {
-    t.ok(err, "Invalid path receives an error");
     t.end();
   });
 });
@@ -158,6 +203,7 @@ test('concurrent locks with one client', function(t) {
   });
 });
 
+
 test('close unlocks so others can lock', function(t) {
   var cxn = zkultra.getCxn(URLS);
   async.auto({
@@ -168,15 +214,22 @@ test('close unlocks so others can lock', function(t) {
     }],
     'lock again': ['new client', function(callback, results) {
       results['new client'].lock('/111/Minna', 'still great coffee', callback);
+    }],
+    'unlock this time': ['lock again', function(callback, results) {
+      results['new client'].unlock('/111/Minna', callback);
     }]
   }, function(err) {
-    t.ifError(err);
+    t.ifError(err, 'conclusion of async.auto');
     t.end();
   });
 });
 
+
 // this test validates we handle a zk server bug correctly
 test('get children error', function(t) {
+  t.skip("This is an impossible case and can't be mocked easily anymore using the new library. Might be worth rethinking though.");
+  t.end();
+  return;
   var cxn = zkultra.getCxn(URLS);
 
   // Override the ._getChildren function to force it to error when called inside of .lock
@@ -185,26 +238,28 @@ test('get children error', function(t) {
   };
 
   cxn.lock('/Stumptown/coffee', 'the best coffee', function(err) {
-    t.ok(err);
+    t.ok(err, "Error received on _getChildren");
     t.end();
   });
 });
 
 
 // this sets the connection state to ERROR
-test('lock, change state to ERROR and unlock', function(t) {
+test('lock, change state to ERROR and try to unlock', function(t) {
   var cxn = zkultra.getCxn(URLS);
   async.series([
     cxn.lock.bind(cxn, '/plumber/wrench', 'grrr'),
-    cxn._changeState('ERROR'),
-    cxn.unlock.bind(cxn, '/plumber/wrench')
+    function(callback) {
+      cxn._changeState('ERROR');
+      cxn.unlock('/plumber/wrench', callback);
+    }
   ], function(err, result) {
-    t.ok(err, "Correctly receieved unlock error");
+    t.ok(err, "Correctly receieved unlock error because the ephemeral lock was lost when the connection was closed");
     t.end();
   });
 });
 
-// this needs to be last, tape has no notion of 'cleanup'
+
 test('cleanup', function(t) {
   zkultra.shutdown();
   t.end();
