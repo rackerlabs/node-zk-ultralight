@@ -14,9 +14,9 @@ Slimmer profile, low-calorie distributed locking library based on [racker/node-z
 
 ## Locking strategy
 
-Like `node-zookeeper-client`, node-zk-ultralight's locking is based on [the ZooKeeper lock recipe.](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_recipes_Locks)
+Like `node-zookeeper-client`, `node-zk-ultralight`'s locking is based on [the ZooKeeper lock recipe.](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_recipes_Locks)
 
-The key difference: the ZK lock recipe recommends negotiating for the lock under the requested lock node with child nodes like `_locknode_/guid-lock-<sequence number>`. However, [ephemeral nodes may not have children](http://zookeeper.apache.org/doc/r3.2.1/zookeeperProgrammers.html#Ephemeral+Nodes), so applications with a large number of unique locks, especially a monotonically increasing number of locks (such as locking on a unique timestamp), pose a management problem. Locks created with node-zk-ultralight are ephemeral, and when no longer needed, they'll evaporate like the morning dew with the sunrise.
+The key difference: the ZK lock recipe recommends negotiating for the lock under the requested lock node with child nodes like `_locknode_/guid-lock-<sequence number>`. However, [ephemeral nodes may not have children](http://zookeeper.apache.org/doc/r3.2.1/zookeeperProgrammers.html#Ephemeral+Nodes), and non-ephemeral state impacts zookeeper's speed in recovering from network partitions, so applications with a large number of unique locks, especially a monotonically increasing number of locks (as when locking on a unique timestamp), pose a management problem. Locks created with node-zk-ultralight are ephemeral, and when no longer needed, they'll evaporate like the morning dew with the sunrise.
 
 ## Usage
 
