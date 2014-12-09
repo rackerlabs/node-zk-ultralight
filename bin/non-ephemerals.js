@@ -18,7 +18,7 @@ var non_ephemerals = [];
 async.whilst(function() { return queue.length > 0; }, function(callback) {
   var znode = queue.pop();
 
-  if (znode === '/zookeeper') {
+  if (znode.match('/zookeeper')) {
     callback();
   }
 

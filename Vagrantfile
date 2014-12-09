@@ -1,7 +1,7 @@
 $install = <<SCRIPT
 apt-get update
 apt-get install -y zookeeperd zookeeper nodejs npm
-ln -s /usr/bin/nodejs /usr/bin/node
+[ -h /usr/bin/node ] || ln -s /usr/bin/nodejs /usr/bin/node
 SCRIPT
 
 Vagrant.configure(2) do |config|

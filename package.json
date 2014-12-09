@@ -28,7 +28,8 @@
     "coverage": "./node_modules/.bin/istanbul cover test-ultralight.js 2>/dev/null"
   },
   "dependencies": {
-    "async": "= 0.1.18",
+    "async": "^0.9.0",
+    "concat-stream": "^1.4.7",
     "logmagic": "= 0.1.4",
     "minimist": "^1.1.0",
     "node-zookeeper-client": "^0.2.1",
