@@ -1,4 +1,4 @@
-## What's weird about this?
+## What's different about this zookeeper locking library?
 
 This locking library is based on [the ZooKeeper lock recipe.](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_recipes_Locks) with one key difference: the lock nodes it creates are ephemeral.
 
