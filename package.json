@@ -30,6 +30,7 @@
   "dependencies": {
     "async": "= 0.1.18",
     "logmagic": "= 0.1.4",
+    "minimist": "^1.1.0",
     "node-zookeeper-client": "^0.2.1",
     "underscore": "= 1.4.4"
   },
