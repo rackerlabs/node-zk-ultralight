@@ -2,7 +2,7 @@
 
 ## What's so special about this zookeeper locking library?
 
-This locking library is based on [the ZooKeeper lock recipe.](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_recipes_Locks) with one key difference: the lock nodes it creates are ephemeral.
+This locking library is based on [the ZooKeeper lock recipe](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_recipes_Locks) with one key difference: the lock nodes it creates are ephemeral.
 
 The ZK lock recipe recommends negotiating for the lock under the requested lock node with child nodes like `_locknode_/guid-lock-<sequence number>`. However, [ephemeral nodes may not have children](http://zookeeper.apache.org/doc/r3.2.1/zookeeperProgrammers.html#Ephemeral+Nodes), and non-ephemeral state impacts zookeeper's speed in recovering from network partitions, so applications with a large number of unique locks, especially a monotonically increasing number of locks (as when locking on a unique timestamp), pose a management problem. `zk-ultralight` is meant to provide locking with less production impact.
 
