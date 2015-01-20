@@ -105,7 +105,7 @@ function ZkCxn(urls, timeout) {
   }
   this._timeout = timeout || DEFAULT_TIMEOUT; // used for onConnection callbacks. TODO: break out to distinct parameter?
   this._cxnState = this.cxnStates.CLOSED; // initial state
-  this._stateEmitter = undefined; // created on connect  
+  this._stateEmitter = undefined; // created on connect
   this._zk = undefined; // instance of node-zookeeper-client
 }
 
@@ -167,7 +167,7 @@ ZkCxn.prototype.onConnection = function(callback) {
       this._connect();
       this._stateEmitter.once(this.cxnStates.CONNECTED, function() {
         callback();
-      });    
+      });
       this._stateEmitter.once(this.cxnStates.ERROR, function(err) {
         callback(err);
       });
@@ -175,21 +175,21 @@ ZkCxn.prototype.onConnection = function(callback) {
     case this.cxnStates.CONNECTING:
       this._stateEmitter.once(this.cxnStates.CONNECTED, function() {
         callback();
-      });    
+      });
       this._stateEmitter.once(this.cxnStates.ERROR, function(err) {
         callback(err);
       });
       break;
     case this.cxnStates.CONNECTED:
       _.defer(callback);
-      break;        
+      break;
   }
 };
 
 
 ZkCxn.prototype._connect = function() {
   var self = this;
-  log.trace1('ZkCxn._connect'); 
+  log.trace1('ZkCxn._connect');
   switch (this._cxnState) {
     case this.cxnStates.ERROR: // reconnecting after error
     case this.cxnStates.CLOSED: // initial state
@@ -218,7 +218,7 @@ ZkCxn.prototype._connect = function() {
       break;
     case this.cxnStates.CONNECTING:
     case this.cxnStates.CONNECTED:
-      log.warning('Unexpected state in _connect!', { state: this._cxnState }); 
+      log.warning('Unexpected state in _connect!', { state: this._cxnState });
       break;
   }
 };
@@ -288,7 +288,7 @@ ZkCxn.prototype.lock = function(name, txnId, callback) {
         if (self._cxnState !== self.cxnStates.CONNECTED) {
           callback(new Error("(4) Error occurred while attempting to lock "+ name));
           return;
-        }        
+        }
         self._negotiateLock(name, results, callback);
       }]
     }, callback);
@@ -298,17 +298,17 @@ ZkCxn.prototype.lock = function(name, txnId, callback) {
 
 // the locking protocol, still hacky, needs <3, works though
 ZkCxn.prototype._negotiateLock = function(name, results, callback) {
-  var  
+  var
     locked = false, self = this,
     lockpath = name.slice(0, name.lastIndexOf('/') + 1),
     lockname = name.slice(name.lastIndexOf('/') + 1);
-    
+
   async.until(function() { return locked; }, function(callback) {
     callback = _.once(callback);
     if (self._cxnState !== self.cxnStates.CONNECTED) {
       callback(new Error("(5) Error occurred while attempting to lock "+ name));
       return;
-    }        
+    }
     self._zk.getChildren(lockpath.length <= 1 ? lockpath : lockpath.slice(0, -1), function(err, children) {
       if (err || self._cxnState !== self.cxnStates.CONNECTED) {
         log.error('Error obtaining children.', {error: err, path: lockpath, name: lockname});
@@ -422,6 +422,7 @@ ZkCxn.prototype.close = function(callback) {
       this._zk.close();
       this._zk = null;
       this._changeState(this.cxnStates.CLOSED);
+      callback();
       break;
   }
 };
