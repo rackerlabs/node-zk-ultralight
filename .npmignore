@@ -1,3 +1,5 @@
+npm-debug.log
+.vagrant
 .gitignore
 .travis.yml
 Vagrantfile
