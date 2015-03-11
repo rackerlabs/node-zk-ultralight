@@ -66,7 +66,6 @@ exports.getCxn = function getCxn(zkUrls, timeout) {
   log.trace1('getCxn');
   if (!cxns[urls]) {
     cxns[urls] = new ZkCxn(urls, timeout);
-    cxns[urls]._connect(); // or could just wait until the connection is used
   }
   return cxns[urls];
 };
