@@ -26,10 +26,9 @@ if (process.env.TRACE) {
 var URLS = ['127.0.0.1:2181'];
 var BAD_URLS = ['127.0.0.1:666'];
 
-if (process.env.ZOOKEEPER_PORT_2181_TCP_ADDR) {
+if (process.env.ZOOKEEPER_PORT_2181_TCP_ADDR && process.env.ZOOKEEPER_PORT_2181_TCP_PORT) {
   URLS = [process.env.ZOOKEEPER_PORT_2181_TCP_ADDR + ":" + process.env.ZOOKEEPER_PORT_2181_TCP_PORT];
-}
-else if (process.env.ZK) {
+} else if (process.env.ZK) {
   URLS = [process.env.ZK];
 }
 
