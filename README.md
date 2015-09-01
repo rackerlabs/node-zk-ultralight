@@ -65,5 +65,3 @@ ZK=$(docker-machine ip zk):2181 npm run test
 # License
 
 Library is distributed under the [Apache license](http://www.apache.org/licenses/LICENSE-2.0.html).
-
-[![downloades](https://nodei.co/npm-dl/zk-ultralight.png)](https://nodei.co/npm-dl/zk-ultralight/)
