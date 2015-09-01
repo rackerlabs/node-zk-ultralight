@@ -2,5 +2,7 @@ npm-debug.log
 .vagrant
 .gitignore
 .travis.yml
+Dockerfile
 Vagrantfile
 test-ultralight.js
+docker-compose.yml

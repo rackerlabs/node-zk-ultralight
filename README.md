@@ -48,6 +48,12 @@ The Vagrantfile ships a vm with a running zookeeper instance, which is all you n
 
 `npm test`
 
+Optionally, the zookeeper server and port can be given with:
+
+```
+ZK=$(docker-machine ip zk):2181 npm run test
+```
+
 ### Lint
 
 `npm run-script lint`

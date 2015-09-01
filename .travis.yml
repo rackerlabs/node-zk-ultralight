@@ -1,7 +1,13 @@
 language: node_js
+sudo: false
+addons:
+  apt:
+    packages:
+    - zookeeperd
+    - zookeeper
 install:
-  - sudo apt-get update
-  - sudo apt-get install -y zookeeperd zookeeper
   - npm install .
 node_js:
    - "0.10"
+   - "0.12"
+   - "iojs"
