@@ -28,17 +28,17 @@
     "coverage": "./node_modules/.bin/istanbul cover test-ultralight.js 2>/dev/null"
   },
   "dependencies": {
-    "async": "^0.9.0",
+    "async": "^1.4.2",
     "binary": "^0.3.0",
     "concat-stream": "^1.4.7",
-    "logmagic": "= 0.1.4",
+    "logmagic": "^0.3.0",
     "minimist": "^1.1.0",
     "node-zookeeper-client": "^0.2.1",
-    "underscore": "= 1.4.4"
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "tape": "2.3.2",
-    "jshint": "1.1.0",
+    "tape": "4.2.0",
+    "jshint": "2.8.0",
     "istanbul": ">= 0.1.37"
   },
   "engines": {
