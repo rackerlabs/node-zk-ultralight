@@ -90,6 +90,12 @@ exports.shutdown = function shutdown(callback) {
 };
 
 
+/**
+ * Export ZkCxn
+ */
+exports.ZkCxn = ZkCxn;
+
+
 /*
  * @constructor
  * @params {String} urls A comma-delimited array of <ZK host:port>s.
