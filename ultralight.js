@@ -283,7 +283,7 @@ ZkCxn.prototype.lock = function(name, txnId, callback) {
           return;
         }
         try {
-          self._zk.create(name, txnId, zookeeper.CreateMode.EPHEMERAL_SEQUENTIAL, callback);
+          self._zk.create(name, txnId, null, zookeeper.CreateMode.EPHEMERAL_SEQUENTIAL, callback);
         } catch (err) {
           callback(err);
         }
